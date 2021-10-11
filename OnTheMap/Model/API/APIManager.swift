@@ -25,7 +25,7 @@ class APIManager {
             case .login:
                 return ""
             case .usersLocations:
-                return Endpoints.baseURL + "v1/StudentLocation?limit=20"
+                return Endpoints.baseURL + "v1/StudentLocation?limit=100"
             }
         }
         
@@ -50,16 +50,9 @@ class APIManager {
                     completion(responseObject, nil)
                 }
             } catch {
-//                do {
-//                    let errorResponse = try decoder.decode(TMDBResponse.self, from: data) as Error
-//                    DispatchQueue.main.async {
-//                        completion(nil, errorResponse)
-//                    }
-//                } catch {
-//                    DispatchQueue.main.async {
-//                        completion(nil, error)
-//                    }
-//                }
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
             }
         }
         task.resume()

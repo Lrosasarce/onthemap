@@ -11,18 +11,31 @@ import MapKit
 class MapViewController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
-    var userLocations = [UserLocation]()
-
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    var annotations: [MKPointAnnotation] = []
+    
+    var userLocations: [UserLocation]! {
+        let object = UIApplication.shared.delegate
+        let appDelegate = object as! AppDelegate
+        return appDelegate.userLocations
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        initView()
+        fetchLocations()
+    }
+    
+    private func initView() {
+        addScreenValues()
+        addStyleToElements()
+        configureMapView()
         
-        APIManager.shared.fetchUserLocations { users, Error in
-            self.userLocations = users
-        }
     }
     
     private func addScreenValues() {
-            
+        title = "On the Map"
     }
     
     private func addStyleToElements() {
@@ -33,26 +46,94 @@ class MapViewController: UIViewController {
         mapView.delegate = self
     }
     
-    // MARK: - HandleResponse
-    private func handleUserLocation(response: UserLocationResponse?, error:  Error?) {
-        
+    private func fetchLocations() {
+        configureActivityIndicator(enabled: true)
+        APIManager.shared.fetchUserLocations(completion: handleUserLocation(locations:error:))
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func configureActivityIndicator(enabled: Bool) {
+        mapView.isUserInteractionEnabled = !enabled
+        if enabled {
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.stopAnimating()
+        }
     }
-    */
+    
+    // MARK: - HandleResponse
+    private func handleUserLocation(locations: [UserLocation], error:  Error?) {
+        configureActivityIndicator(enabled: false)
+        
+        if let error = error {
+            showErrorAlert(message: error.localizedDescription)
+            return
+        }
+        
+        let object = UIApplication.shared.delegate
+        let appDelegate = object as! AppDelegate
+        appDelegate.userLocations = locations
+        
+        mapView.removeAnnotations(annotations)
+        annotations.removeAll()
+        
+        for location in locations {
+            let annotation = MKPointAnnotation()
+            annotation.title = location.getFormatName()
+            annotation.subtitle = location.mediaURL
+            annotation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+            annotations.append(annotation)
+            mapView.addAnnotation(annotation)
+        }
+        
+    }
 
+    
+    // MARK: - IBAction
+    @IBAction func logoutBtnPressed(_ sender: UIBarButtonItem) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func addAnnotationBtnPressed(_ sender: UIBarButtonItem) {
+        print(#function)
+    }
+    
+    @IBAction func refreshBtnPressed(_ sender: UIBarButtonItem) {
+        fetchLocations()
+    }
+    
+    // MARK: - Class method
+    class func instanceViewController() -> MapViewController {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let viewController = storyboard.instantiateViewController(identifier: "MapViewController") as? MapViewController else {
+            return MapViewController()
+        }
+        return viewController
+    }
+    
+    
 }
 
 extension MapViewController: MKMapViewDelegate {
-    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard annotation is MKPointAnnotation else { return nil }
         
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: "Annotation")
+        if annotationView == nil {
+            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "Annotation")
+            annotationView?.canShowCallout = true
+            
+            let button = UIButton(type: .detailDisclosure)
+            annotationView?.rightCalloutAccessoryView = button
+        } else {
+            annotationView!.annotation = annotation
+        }
+        
+        return annotationView
     }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        guard let annotation = view.annotation as? MKPointAnnotation else { return }
+        redirectToWebSite(urlString: annotation.subtitle ?? "")
+    }
+    
 }

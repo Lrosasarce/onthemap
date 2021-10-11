@@ -37,7 +37,16 @@ class LoginViewController: UIViewController {
         signUpBtn.configureAsLink(linkText: "Sign Up")
     }
     
+    private func routeToHome() {
+        performSegue(withIdentifier: "goToHome", sender: nil)
+    }
 
-
+    @IBAction func loginBtnPressed(_ sender: UIButton) {
+        routeToHome()
+    }
+    @IBAction func signUpBtnPressed(_ sender: UIButton) {
+        print(#function)
+    }
+    
 }
 

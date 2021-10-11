@@ -22,4 +22,8 @@ struct UserLocation: Codable {
     let objectId: String
     let uniqueKey: String
     let updatedAt: String
+    
+    func getFormatName() -> String {
+        return firstName + " " + lastName
+    }
 }
