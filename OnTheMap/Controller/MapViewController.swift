@@ -15,7 +15,7 @@ class MapViewController: UIViewController {
     
     var annotations: [MKPointAnnotation] = []
     
-    var userLocations: [UserLocation]! {
+    var userLocations: [StudentInformation]! {
         let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
         return appDelegate.userLocations
@@ -61,7 +61,7 @@ class MapViewController: UIViewController {
     }
     
     // MARK: - HandleResponse
-    private func handleUserLocation(locations: [UserLocation], error:  Error?) {
+    private func handleUserLocation(locations: [StudentInformation], error:  Error?) {
         configureActivityIndicator(enabled: false)
         
         if let error = error {
@@ -90,11 +90,13 @@ class MapViewController: UIViewController {
     
     // MARK: - IBAction
     @IBAction func logoutBtnPressed(_ sender: UIBarButtonItem) {
-        dismiss(animated: true, completion: nil)
+        APIManager.shared.logout {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     @IBAction func addAnnotationBtnPressed(_ sender: UIBarButtonItem) {
-        print(#function)
+        performSegue(withIdentifier: "addPost", sender: nil)
     }
     
     @IBAction func refreshBtnPressed(_ sender: UIBarButtonItem) {

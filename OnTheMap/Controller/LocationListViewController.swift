@@ -12,7 +12,7 @@ class LocationListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    var userLocations: [UserLocation]! {
+    var userLocations: [StudentInformation]! {
         let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
         return appDelegate.userLocations
@@ -57,7 +57,7 @@ class LocationListViewController: UIViewController {
     }
     
     // MARK: - HandleResponse
-    private func handleUserLocation(locations: [UserLocation], error:  Error?) {
+    private func handleUserLocation(locations: [StudentInformation], error:  Error?) {
         
         if let error = error {
             showErrorAlert(message: error.localizedDescription)
@@ -78,7 +78,7 @@ class LocationListViewController: UIViewController {
     }
     
     @IBAction func addAnnotationBtnPressed(_ sender: UIBarButtonItem) {
-        print(#function)
+        performSegue(withIdentifier: "addPost", sender: nil)
     }
     
     @IBAction func refreshBtnPressed(_ sender: UIBarButtonItem) {
