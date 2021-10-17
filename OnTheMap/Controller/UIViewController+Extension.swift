@@ -35,4 +35,13 @@ extension UIViewController {
         alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alertVC, animated: true, completion: nil)
     }
+    
+    func showErrorAlertOption(message: String, completion: @escaping(() -> Void)) {
+        let alertVC = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alertVC.addAction(UIAlertAction(title: "Overwrite", style: .default, handler: { _ in
+            completion()
+        }))
+        alertVC.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        present(alertVC, animated: true, completion: nil)
+    }
 }

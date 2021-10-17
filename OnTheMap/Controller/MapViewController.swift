@@ -20,6 +20,7 @@ class MapViewController: UIViewController {
         let appDelegate = object as! AppDelegate
         return appDelegate.userLocations
     }
+    var userLocation: StudentInformation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,7 +87,6 @@ class MapViewController: UIViewController {
         }
         
     }
-
     
     // MARK: - IBAction
     @IBAction func logoutBtnPressed(_ sender: UIBarButtonItem) {
@@ -96,7 +96,12 @@ class MapViewController: UIViewController {
     }
     
     @IBAction func addAnnotationBtnPressed(_ sender: UIBarButtonItem) {
-        performSegue(withIdentifier: "addPost", sender: nil)
+        if let location = userLocations.filter({ $0.objectId == "c536a94j8654psprbc50" }).first {
+            userLocation = location
+            showErrorAlertOption(message: "You Have Already Posted a Student Location, Would you like Overwrite Your Current Location?") {
+                self.performSegue(withIdentifier: "addPost", sender: nil)
+            }
+        }
     }
     
     @IBAction func refreshBtnPressed(_ sender: UIBarButtonItem) {

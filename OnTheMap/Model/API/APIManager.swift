@@ -16,7 +16,14 @@ class APIManager {
         static var registered = false
         static var key = ""
         static var session = ""
+        static var objectId = ""
     }
+    
+    struct UserData {
+        static var firstName = ""
+        static var lasName = ""
+    }
+
     
     private init() {}
     
@@ -28,12 +35,16 @@ class APIManager {
         case login
         case logout
         case usersLocations
+        case postLocation
+        case dataUser
         
         var stringValue: String {
             switch self {
             case .login: return Endpoints.baseURL + "v1/session"
-            case .usersLocations: return Endpoints.baseURL + "v1/StudentLocation?limit=100"
+            case .usersLocations: return Endpoints.baseURL + "v1/StudentLocation?limit=100&order=-updatedAt"
             case .logout: return Endpoints.baseURL + "v1/session"
+            case .postLocation: return Endpoints.baseURL + "v1/StudentLocation"
+            case .dataUser: return Endpoints.baseURL + "v1/users" + "/\(Auth.session)"
             }
         }
         
@@ -61,16 +72,23 @@ class APIManager {
                 }
                 return
             }
+            
+            var newData = data
+            if url == Endpoints.dataUser.url {
+                let range = 5..<data.count
+                newData = data.subdata(in: range)
+            }
+            
             let decoder = JSONDecoder()
-            self.showLog(description: "Response: \(url.absoluteString)", data: data)
+            self.showLog(description: "Response: \(url.absoluteString)", data: newData)
             do {
-                let responseObject = try decoder.decode(ResponseType.self, from: data)
+                let responseObject = try decoder.decode(ResponseType.self, from: newData)
                 DispatchQueue.main.async {
                     completion(responseObject, nil)
                 }
             } catch {
                 do {
-                    let errorResponse = try decoder.decode(OTMResponse.self, from: data) as Error
+                    let errorResponse = try decoder.decode(OTMResponse.self, from: newData) as Error
                     DispatchQueue.main.async {
                         completion(nil, errorResponse)
                     }
@@ -155,6 +173,34 @@ class APIManager {
         }
     }
     
+    func getUserData(completion: @escaping(Bool, Error?) -> Void) {
+        taskForGETRequest(url: Endpoints.dataUser.url, responseType: UserDataResponse.self) { response, error in
+            
+            if let response = response {
+                UserData.firstName = response.firstName
+                UserData.lasName = response.lastName
+                completion(true, nil)
+            } else {
+                completion(false, error)
+            }
+            
+        }
+    }
+    
+    func postStudentLocation(mapString: String, mediaURL: String, latitude: Float, longitude: Float, completion: @escaping(Bool, Error?) -> Void) {
+        let request = PostStudenLocationRequest(uniqueKey: Auth.key, firstName: UserData.firstName, lastName: UserData.lasName, mapString: mapString, mediaURL: mediaURL, latitude: latitude, longitude: longitude)
+        
+        taskForPOSTRequest(url: Endpoints.postLocation.url, responseType: PostStudentLocationResponse.self, body: request) { response, error in
+            
+            if let _ = response {
+                completion(true, nil)
+            } else {
+                completion(false, error)
+            }
+        }
+        
+    }
+    
     func logout(completion: @escaping () -> Void) {
         var request = URLRequest(url: Endpoints.logout.url)
         request.httpMethod = "DELETE"
@@ -173,16 +219,10 @@ class APIManager {
             // As the project specification doesn't tells about if logout request needs to be a right response. I think for a better user experience whatever the logout response, the app should dismiss the current view and should show the login screen.
             DispatchQueue.main.async {
                 Auth.session = ""
+                Auth.key = ""
                 Auth.registered = false
                 completion()
             }
-            
-            
-            if error != nil {
-                print("Error: \(error!.localizedDescription)")
-                return
-            }
-            self.showLog(description: "Response: \(request.url!.absoluteString)", data: data!)
         }
         
         task.resume()

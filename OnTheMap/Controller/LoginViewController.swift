@@ -26,9 +26,7 @@ class LoginViewController: UIViewController {
     
     private func addScreenValues() {
         emailTextField.placeholder = "Email"
-        emailTextField.text = "lrosasarce@gmail.com"
         passwordTextField.placeholder = "Password"
-        passwordTextField.text = "espadaulquiorra4"
         
         loginBtn.setTitle("LOG IN", for: .normal)
         signUpBtn.setTitle("Don't have an account? Sign Up", for: .normal)
@@ -55,6 +53,14 @@ class LoginViewController: UIViewController {
     
     // MARK: - Handle REsponse
     private func handleLoginWithUsername(success: Bool, error: Error?) {
+        if success {
+            APIManager.shared.getUserData(completion: handleUserData(success:error:))
+        } else {
+            showErrorAlert(message: error?.localizedDescription ?? "")
+        }
+    }
+    
+    private func handleUserData(success: Bool, error: Error?) {
         if success {
             routeToHome()
         } else {
