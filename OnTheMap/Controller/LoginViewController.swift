@@ -30,9 +30,7 @@ class LoginViewController: UIViewController {
     
     private func addScreenValues() {
         emailTextField.placeholder = "Email"
-        emailTextField.text = "lrosasarce@gmail.com"
         passwordTextField.placeholder = "Password"
-        passwordTextField.text = "espadaulquiorra4"
         
         loginBtn.setTitle("LOG IN", for: .normal)
         signUpBtn.setTitle("Don't have an account? Sign Up", for: .normal)
