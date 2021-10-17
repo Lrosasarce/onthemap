@@ -9,18 +9,22 @@ import UIKit
 
 class PostLocationController: UIViewController {
 
+    // MARK: - IBOutlets
     @IBOutlet weak var studentLocationTextField: UITextField!
     @IBOutlet weak var studentLinkTextField: UITextField!
     @IBOutlet weak var findBtn: UIButton!
-    var completionDismiss: (() -> Void)?
     
+    // MARK: - Properties
+    var completionDismiss: (() -> Void)?
     var studentInformation: StudentInformation?
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         initView()
     }
     
+    // MARK: - Private methods
     private func initView() {
         addScreenValues()
         addStyleToElements()
@@ -57,8 +61,7 @@ class PostLocationController: UIViewController {
     }
     
     
-    
-    
+    // MARK: - IBAction
     @IBAction func findBtnPressed(_ sender: UIButton) {
         if validateForm() {
             performSegue(withIdentifier: "findLocation", sender: nil)

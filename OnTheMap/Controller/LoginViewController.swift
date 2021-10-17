@@ -9,17 +9,20 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
+    // MARK: IBOUtlets
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginBtn: UIButton!
     @IBOutlet weak var signUpBtn: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         initView()
     }
     
+    // MARK: - Private methods
     private func initView() {
         addScreenValues()
         addStyleToElements()
@@ -44,13 +47,6 @@ class LoginViewController: UIViewController {
         performSegue(withIdentifier: "goToHome", sender: nil)
     }
     
-
-    @IBAction func loginBtnPressed(_ sender: UIButton) {
-        configureActivityIndicator(enabled: true)
-        APIManager.shared.login(username: emailTextField.text!, password: passwordTextField.text!, completion: handleLoginWithUsername(success:error:))
-        
-    }
-    
     private func configureActivityIndicator(enabled: Bool) {
         emailTextField.isUserInteractionEnabled = !enabled
         passwordTextField.isUserInteractionEnabled = !enabled
@@ -63,6 +59,13 @@ class LoginViewController: UIViewController {
         }
     }
     
+
+    // MARK: - IBActions
+    @IBAction func loginBtnPressed(_ sender: UIButton) {
+        configureActivityIndicator(enabled: true)
+        APIManager.shared.login(username: emailTextField.text!, password: passwordTextField.text!, completion: handleLoginWithUsername(success:error:))
+    }
+    
     
     @IBAction func signUpBtnPressed(_ sender: UIButton) {
         redirectToWebSite(urlString: APIManager.Endpoints.signUp.stringValue)
@@ -70,7 +73,7 @@ class LoginViewController: UIViewController {
     
     
     
-    // MARK: - Handle REsponse
+    // MARK: - Handle Response
     private func handleLoginWithUsername(success: Bool, error: Error?) {
         if success {
             APIManager.shared.getUserData(completion: handleUserData(success:error:))

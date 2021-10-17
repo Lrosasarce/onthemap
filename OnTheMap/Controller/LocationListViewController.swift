@@ -9,9 +9,11 @@ import UIKit
 
 class LocationListViewController: UIViewController {
     
+    // MARK: - IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    // MARK: - Properties
     var userLocations: [StudentInformation]! {
         let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
@@ -19,23 +21,21 @@ class LocationListViewController: UIViewController {
     }
     var studentInformation: StudentInformation?
 
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         initView()
     }
     
+    // MARK: - Private methods
     private func initView() {
         addScreenValues()
-        addStyleToElements()
         configureTableView()
     }
     
     private func addScreenValues() {
-        
-    }
-    
-    private func addStyleToElements() {
-        
+        title = "On the Map"
     }
     
     private func configureTableView() {
@@ -106,7 +106,7 @@ class LocationListViewController: UIViewController {
 }
 
 
-
+// MARK: - UITableViewDataSource
 extension LocationListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return userLocations.count
@@ -120,6 +120,7 @@ extension LocationListViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension LocationListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         redirectToWebSite(urlString: userLocations[indexPath.row].mediaURL)

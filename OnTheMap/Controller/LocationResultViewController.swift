@@ -10,21 +10,25 @@ import MapKit
 
 class LocationResultViewController: UIViewController {
 
+    // MARK: - IBOutlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var finishBtn: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    // MARK: - Properties
     var searchText: String = ""
     var mediaURLString: String = ""
     var studentPostedLocation: Bool = false
     var location: CLLocationCoordinate2D?
     var completionDismiss: (() -> Void)?
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         initView()
     }
     
+    // MARK: - Private methods
     private func initView() {
         addScreenValues()
         addStyleToElements()
@@ -70,7 +74,14 @@ class LocationResultViewController: UIViewController {
         mapView.addAnnotation(annotation)
         mapView.setCenter(location, animated: false)
     }
+    
+    private func configureActivityIndicator(enabled: Bool) {
+        finishBtn.isUserInteractionEnabled = !enabled
+        enabled ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
+        
+    }
 
+    // MARK: - IBAction
     @IBAction func finishBtnPressed(_ sender: UIButton) {
         guard let location = location else {
             self.showErrorAlert(message: "Sorry, the location could not be found.")
@@ -87,6 +98,7 @@ class LocationResultViewController: UIViewController {
 
     }
     
+    // MARK: - Handle Response
     private func handleLocationSaved(success: Bool, error: Error?) {
         configureActivityIndicator(enabled: false)
         if success {
@@ -98,13 +110,10 @@ class LocationResultViewController: UIViewController {
         }
     }
 
-    private func configureActivityIndicator(enabled: Bool) {
-        finishBtn.isUserInteractionEnabled = !enabled
-        enabled ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
-        
-    }
+    
 }
 
+// MARK: - MKMapViewDelegate
 extension LocationResultViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard annotation is MKPointAnnotation else { return nil }

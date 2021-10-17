@@ -10,11 +10,12 @@ import MapKit
 
 class MapViewController: UIViewController {
     
+    // MARK: - IBOutlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    // MARK: - Properties
     var annotations: [MKPointAnnotation] = []
-    
     var userLocations: [StudentInformation]! {
         let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
@@ -22,29 +23,24 @@ class MapViewController: UIViewController {
     }
     var studentInformation: StudentInformation?
     
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         initView()
         fetchLocations()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
     
+    // MARK: - Private methods
     private func initView() {
         addScreenValues()
-        addStyleToElements()
         configureMapView()
         
     }
-    
+
     private func addScreenValues() {
         title = "On the Map"
-    }
-    
-    private func addStyleToElements() {
-        
     }
     
     private func configureMapView() {
