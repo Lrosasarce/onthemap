@@ -13,6 +13,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginBtn: UIButton!
     @IBOutlet weak var signUpBtn: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,12 +46,28 @@ class LoginViewController: UIViewController {
     
 
     @IBAction func loginBtnPressed(_ sender: UIButton) {
+        configureActivityIndicator(enabled: true)
         APIManager.shared.login(username: emailTextField.text!, password: passwordTextField.text!, completion: handleLoginWithUsername(success:error:))
         
     }
-    @IBAction func signUpBtnPressed(_ sender: UIButton) {
-        print(#function)
+    
+    private func configureActivityIndicator(enabled: Bool) {
+        emailTextField.isUserInteractionEnabled = !enabled
+        passwordTextField.isUserInteractionEnabled = !enabled
+        loginBtn.isUserInteractionEnabled = !enabled
+        
+        if enabled {
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.stopAnimating()
+        }
     }
+    
+    
+    @IBAction func signUpBtnPressed(_ sender: UIButton) {
+        redirectToWebSite(urlString: APIManager.Endpoints.signUp.stringValue)
+    }
+    
     
     
     // MARK: - Handle REsponse
@@ -58,12 +75,16 @@ class LoginViewController: UIViewController {
         if success {
             APIManager.shared.getUserData(completion: handleUserData(success:error:))
         } else {
+            configureActivityIndicator(enabled: false)
             showErrorAlert(message: error?.localizedDescription ?? "")
         }
     }
     
     private func handleUserData(success: Bool, error: Error?) {
+        configureActivityIndicator(enabled: false)
         if success {
+            emailTextField.text = ""
+            passwordTextField.text = ""
             routeToHome()
         } else {
             showErrorAlert(message: error?.localizedDescription ?? "")

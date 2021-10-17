@@ -55,6 +55,9 @@
                                     <action selector="signUpBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jBd-sM-JQS"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="cNe-RR-7ZU">
+                                <rect key="frame" x="197" y="447" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -67,14 +70,17 @@
                             <constraint firstItem="hyZ-hL-zZQ" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="XqW-UF-FfB"/>
                             <constraint firstItem="zQP-Xe-QYp" firstAttribute="top" secondItem="H5o-Ra-6Fq" secondAttribute="bottom" constant="10" id="Yh2-bV-b2o"/>
                             <constraint firstItem="nua-o0-dQ0" firstAttribute="top" secondItem="hyZ-hL-zZQ" secondAttribute="bottom" constant="30" id="aDH-Ky-ZbA"/>
+                            <constraint firstItem="cNe-RR-7ZU" firstAttribute="top" secondItem="Qvg-wy-8aS" secondAttribute="bottom" constant="30" id="cNs-nI-RmP"/>
                             <constraint firstItem="Qvg-wy-8aS" firstAttribute="top" secondItem="zQP-Xe-QYp" secondAttribute="bottom" constant="20" id="eWI-oH-4E9"/>
                             <constraint firstItem="zQP-Xe-QYp" firstAttribute="trailing" secondItem="H5o-Ra-6Fq" secondAttribute="trailing" id="i8O-r6-n4H"/>
+                            <constraint firstItem="cNe-RR-7ZU" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="nna-Da-521"/>
                             <constraint firstItem="H5o-Ra-6Fq" firstAttribute="trailing" secondItem="nua-o0-dQ0" secondAttribute="trailing" id="qg1-9Z-aVz"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="nua-o0-dQ0" secondAttribute="trailing" constant="30" id="rRg-wv-KL7"/>
                             <constraint firstItem="hyZ-hL-zZQ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="40" id="tX9-PP-giq"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="cNe-RR-7ZU" id="BeK-oB-k0e"/>
                         <outlet property="emailTextField" destination="nua-o0-dQ0" id="mQF-5X-deC"/>
                         <outlet property="loginBtn" destination="zQP-Xe-QYp" id="UMz-xe-Vka"/>
                         <outlet property="passwordTextField" destination="H5o-Ra-6Fq" id="kfV-jH-rNR"/>
@@ -281,21 +287,27 @@
                                     <action selector="finishBtnPressed:" destination="HxC-Jl-0Ic" eventType="touchUpInside" id="iNB-9p-tiV"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="oQ3-zT-Dvo">
+                                <rect key="frame" x="197" y="465" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ALg-cE-dj4"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="ALg-cE-dj4" firstAttribute="trailing" secondItem="7Dx-zc-ibw" secondAttribute="trailing" id="6na-NZ-Hnx"/>
+                            <constraint firstItem="oQ3-zT-Dvo" firstAttribute="centerY" secondItem="ALg-cE-dj4" secondAttribute="centerY" id="Hdt-Nw-KEi"/>
                             <constraint firstItem="7Dx-zc-ibw" firstAttribute="leading" secondItem="ALg-cE-dj4" secondAttribute="leading" id="P5d-u0-lGf"/>
                             <constraint firstItem="ALg-cE-dj4" firstAttribute="bottom" secondItem="7Dx-zc-ibw" secondAttribute="bottom" id="Pg9-yd-bJE"/>
                             <constraint firstItem="s2K-s3-sYG" firstAttribute="leading" secondItem="ALg-cE-dj4" secondAttribute="leading" constant="24" id="Sub-cm-8N1"/>
                             <constraint firstItem="7Dx-zc-ibw" firstAttribute="top" secondItem="ALg-cE-dj4" secondAttribute="top" id="YcE-Gy-WXS"/>
                             <constraint firstItem="ALg-cE-dj4" firstAttribute="trailing" secondItem="s2K-s3-sYG" secondAttribute="trailing" constant="24" id="daw-Pk-lfT"/>
+                            <constraint firstItem="oQ3-zT-Dvo" firstAttribute="centerX" secondItem="ALg-cE-dj4" secondAttribute="centerX" id="x63-L5-OW8"/>
                             <constraint firstItem="ALg-cE-dj4" firstAttribute="bottom" secondItem="s2K-s3-sYG" secondAttribute="bottom" constant="24" id="zAh-S9-EiH"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="0ep-GX-96n"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="oQ3-zT-Dvo" id="3NU-yr-zWH"/>
                         <outlet property="finishBtn" destination="s2K-s3-sYG" id="bVL-KV-M4v"/>
                         <outlet property="mapView" destination="7Dx-zc-ibw" id="d92-10-ZzH"/>
                     </connections>

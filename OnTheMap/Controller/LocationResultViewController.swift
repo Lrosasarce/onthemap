@@ -12,6 +12,7 @@ class LocationResultViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var finishBtn: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var searchText: String = ""
     var mediaURLString: String = ""
@@ -47,16 +48,16 @@ class LocationResultViewController: UIViewController {
         let search = MKLocalSearch(request: searchRequest)
         search.start { (response, error) in
             guard let response = response else {
-                print("Error: \(error?.localizedDescription)")
+                print("Error: \(error!.localizedDescription)")
                 self.showErrorAlert(message: "Sorry, the location could not be found.")
                 return
             }
             
             for item in response.mapItems {
-                if let _ = item.name,
-                    let locationResponse = item.placemark.location {
+                if let _ = item.name, let locationResponse = item.placemark.location {
                     self.location = locationResponse.coordinate
                     self.searchLocation(location: self.location!)
+                    break
                 }
             }
         }
@@ -76,6 +77,8 @@ class LocationResultViewController: UIViewController {
             return
         }
         
+        configureActivityIndicator(enabled: true)
+        finishBtn.isUserInteractionEnabled = false
         if studentPostedLocation {
             APIManager.shared.updateStudentLocation(mapString: searchText, mediaURL: mediaURLString, latitude: location.latitude, longitude: location.longitude, completion: handleLocationSaved(success:error:))
         } else {
@@ -85,6 +88,7 @@ class LocationResultViewController: UIViewController {
     }
     
     private func handleLocationSaved(success: Bool, error: Error?) {
+        configureActivityIndicator(enabled: false)
         if success {
             completionDismiss?()
             dismiss(animated: true, completion: nil)
@@ -94,6 +98,11 @@ class LocationResultViewController: UIViewController {
         }
     }
 
+    private func configureActivityIndicator(enabled: Bool) {
+        finishBtn.isUserInteractionEnabled = !enabled
+        enabled ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
+        
+    }
 }
 
 extension LocationResultViewController: MKMapViewDelegate {

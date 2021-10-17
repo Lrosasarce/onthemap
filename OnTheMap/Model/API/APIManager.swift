@@ -38,15 +38,18 @@ class APIManager {
         case postLocation
         case updateLocation
         case dataUser
+        case signUp
         
         var stringValue: String {
             switch self {
             case .login: return Endpoints.baseURL + "v1/session"
+            case .signUp: return "https://auth.udacity.com/sign-up"
             case .usersLocations: return Endpoints.baseURL + "v1/StudentLocation?limit=100&order=-updatedAt"
             case .logout: return Endpoints.baseURL + "v1/session"
             case .postLocation: return Endpoints.baseURL + "v1/StudentLocation"
             case .updateLocation: return Endpoints.baseURL + "v1/StudentLocation" + "/\(Auth.objectId)"
             case .dataUser: return Endpoints.baseURL + "v1/users" + "/\(Auth.session)"
+            
             }
         }
         
