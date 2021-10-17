@@ -250,8 +250,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="findBtn" destination="eSK-zI-QtY" id="V49-90-Icr"/>
-                        <outlet property="locationLabel" destination="e24-Ym-ycl" id="2wP-hq-SbK"/>
-                        <outlet property="userLinkLabel" destination="Mo8-h3-mGd" id="5xI-aT-aWY"/>
+                        <outlet property="studentLinkTextField" destination="Mo8-h3-mGd" id="PfH-8l-I4e"/>
+                        <outlet property="studentLocationTextField" destination="e24-Ym-ycl" id="ypL-lo-iAV"/>
                         <segue destination="HxC-Jl-0Ic" kind="show" identifier="findLocation" id="REf-GU-VvJ"/>
                     </connections>
                 </viewController>

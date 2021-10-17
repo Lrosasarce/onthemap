@@ -20,12 +20,16 @@ class MapViewController: UIViewController {
         let appDelegate = object as! AppDelegate
         return appDelegate.userLocations
     }
-    var userLocation: StudentInformation?
+    var studentInformation: StudentInformation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initView()
         fetchLocations()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     private func initView() {
@@ -84,6 +88,10 @@ class MapViewController: UIViewController {
             annotation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
             annotations.append(annotation)
             mapView.addAnnotation(annotation)
+            
+            if location.objectId == APIManager.Auth.objectId {
+                mapView.setCenter(annotation.coordinate, animated: false)
+            }
         }
         
     }
@@ -96,11 +104,14 @@ class MapViewController: UIViewController {
     }
     
     @IBAction func addAnnotationBtnPressed(_ sender: UIBarButtonItem) {
-        if let location = userLocations.filter({ $0.objectId == "c536a94j8654psprbc50" }).first {
-            userLocation = location
+        if let location = userLocations.filter({ $0.objectId == APIManager.Auth.objectId }).first {
+            studentInformation = location
             showErrorAlertOption(message: "You Have Already Posted a Student Location, Would you like Overwrite Your Current Location?") {
+                APIManager.Auth.objectId = self.studentInformation?.objectId ?? ""
                 self.performSegue(withIdentifier: "addPost", sender: nil)
             }
+        } else {
+            self.performSegue(withIdentifier: "addPost", sender: nil)
         }
     }
     
@@ -115,6 +126,16 @@ class MapViewController: UIViewController {
             return MapViewController()
         }
         return viewController
+    }
+    
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "addPost" {
+            if let navigation = segue.destination as? UINavigationController, let destination = navigation.viewControllers.first as? PostLocationController {
+                destination.studentInformation = studentInformation
+                destination.completionDismiss = fetchLocations
+            }
+        }
     }
     
     

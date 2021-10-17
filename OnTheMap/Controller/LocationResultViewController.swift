@@ -14,7 +14,10 @@ class LocationResultViewController: UIViewController {
     @IBOutlet weak var finishBtn: UIButton!
     
     var searchText: String = ""
+    var mediaURLString: String = ""
+    var studentPostedLocation: Bool = false
     var location: CLLocationCoordinate2D?
+    var completionDismiss: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,7 +75,23 @@ class LocationResultViewController: UIViewController {
             self.showErrorAlert(message: "Sorry, the location could not be found.")
             return
         }
+        
+        if studentPostedLocation {
+            APIManager.shared.updateStudentLocation(mapString: searchText, mediaURL: mediaURLString, latitude: location.latitude, longitude: location.longitude, completion: handleLocationSaved(success:error:))
+        } else {
+            APIManager.shared.postStudentLocation(mapString: searchText, mediaURL: mediaURLString, latitude: location.latitude, longitude: location.longitude, completion: handleLocationSaved(success:error:))
+        }
 
+    }
+    
+    private func handleLocationSaved(success: Bool, error: Error?) {
+        if success {
+            completionDismiss?()
+            dismiss(animated: true, completion: nil)
+            
+        } else {
+            showErrorAlert(message: error!.localizedDescription)
+        }
     }
 
 }

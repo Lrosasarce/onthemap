@@ -17,6 +17,7 @@ class LocationListViewController: UIViewController {
         let appDelegate = object as! AppDelegate
         return appDelegate.userLocations
     }
+    var studentInformation: StudentInformation?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,13 +79,33 @@ class LocationListViewController: UIViewController {
     }
     
     @IBAction func addAnnotationBtnPressed(_ sender: UIBarButtonItem) {
-        performSegue(withIdentifier: "addPost", sender: nil)
+        if let location = userLocations.filter({ $0.objectId == APIManager.Auth.objectId }).first {
+            studentInformation = location
+            showErrorAlertOption(message: "You Have Already Posted a Student Location, Would you like Overwrite Your Current Location?") {
+                APIManager.Auth.objectId = self.studentInformation?.objectId ?? ""
+                self.performSegue(withIdentifier: "addPost", sender: nil)
+            }
+        } else {
+            self.performSegue(withIdentifier: "addPost", sender: nil)
+        }
     }
     
     @IBAction func refreshBtnPressed(_ sender: UIBarButtonItem) {
         fetchLocations()
     }
+    
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "addPost" {
+            if let navigation = segue.destination as? UINavigationController, let destination = navigation.viewControllers.first as? PostLocationController {
+                destination.studentInformation = studentInformation
+                destination.completionDismiss = fetchLocations
+            }
+        }
+    }
 }
+
+
 
 extension LocationListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

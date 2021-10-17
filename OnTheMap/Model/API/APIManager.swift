@@ -36,6 +36,7 @@ class APIManager {
         case logout
         case usersLocations
         case postLocation
+        case updateLocation
         case dataUser
         
         var stringValue: String {
@@ -44,6 +45,7 @@ class APIManager {
             case .usersLocations: return Endpoints.baseURL + "v1/StudentLocation?limit=100&order=-updatedAt"
             case .logout: return Endpoints.baseURL + "v1/session"
             case .postLocation: return Endpoints.baseURL + "v1/StudentLocation"
+            case .updateLocation: return Endpoints.baseURL + "v1/StudentLocation" + "/\(Auth.objectId)"
             case .dataUser: return Endpoints.baseURL + "v1/users" + "/\(Auth.session)"
             }
         }
@@ -147,6 +149,44 @@ class APIManager {
         task.resume()
     }
     
+    private func taskForPUTRequest<RequestType: Encodable, ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, body: RequestType, completion: @escaping (ResponseType?, Error?) -> Void) {
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.httpBody = try! JSONEncoder().encode(body)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+                return
+            }
+            
+            let newData = data
+            
+            self.showLog(description: "Response: \(url.absoluteString)",data: newData)
+            let decoder = JSONDecoder()
+            do {
+                let responseObject = try decoder.decode(ResponseType.self, from: newData)
+                DispatchQueue.main.async {
+                    completion(responseObject, nil)
+                }
+            } catch {
+                do {
+                    let errorResponse = try decoder.decode(OTMResponse.self, from: newData) as Error
+                    DispatchQueue.main.async {
+                        completion(nil, errorResponse)
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(nil, error)
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
+    
     // MARK: - Managers
     func fetchUserLocations(completion: @escaping([StudentInformation], Error?) -> Void) {
         taskForGETRequest(url: Endpoints.usersLocations.url, responseType: StudentInformationResponse.self) { response, error in
@@ -187,10 +227,25 @@ class APIManager {
         }
     }
     
-    func postStudentLocation(mapString: String, mediaURL: String, latitude: Float, longitude: Float, completion: @escaping(Bool, Error?) -> Void) {
+    func postStudentLocation(mapString: String, mediaURL: String, latitude: Double, longitude: Double, completion: @escaping(Bool, Error?) -> Void) {
         let request = PostStudenLocationRequest(uniqueKey: Auth.key, firstName: UserData.firstName, lastName: UserData.lasName, mapString: mapString, mediaURL: mediaURL, latitude: latitude, longitude: longitude)
         
-        taskForPOSTRequest(url: Endpoints.postLocation.url, responseType: PostStudentLocationResponse.self, body: request) { response, error in
+        taskForPOSTRequest(url: Endpoints.postLocation.url, responseType: CreateLocationResponse.self, body: request) { response, error in
+            
+            if let response = response {
+                Auth.objectId = response.objectId
+                print("Object ID: \(Auth.objectId)")
+                completion(true, nil)
+            } else {
+                completion(false, error)
+            }
+        }
+    }
+    
+    func updateStudentLocation(mapString: String, mediaURL: String, latitude: Double, longitude: Double, completion: @escaping(Bool, Error?) -> Void) {
+        let body = PostStudenLocationRequest(uniqueKey: Auth.key, firstName: UserData.firstName, lastName: UserData.lasName, mapString: mapString, mediaURL: mediaURL, latitude: latitude, longitude: longitude)
+        
+        taskForPUTRequest(url: Endpoints.updateLocation.url, responseType: UpdateLocationResponse.self, body: body) { response, error in
             
             if let _ = response {
                 completion(true, nil)
