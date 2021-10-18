@@ -30,10 +30,22 @@ class LoginViewController: UIViewController {
     
     private func addScreenValues() {
         emailTextField.placeholder = "Email"
+        emailTextField.returnKeyType = .done
+        emailTextField.delegate = self
         passwordTextField.placeholder = "Password"
+        passwordTextField.isSecureTextEntry = true
+        passwordTextField.delegate = self
+        passwordTextField.returnKeyType = .done
         
         loginBtn.setTitle("LOG IN", for: .normal)
         signUpBtn.setTitle("Don't have an account? Sign Up", for: .normal)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     private func addStyleToElements() {
@@ -90,6 +102,13 @@ class LoginViewController: UIViewController {
         } else {
             showErrorAlert(message: error?.localizedDescription ?? "")
         }
+    }
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 
