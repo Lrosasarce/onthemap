@@ -32,9 +32,18 @@ class PostLocationController: UIViewController {
     
     private func addScreenValues() {
         title = "Add Location"
+        studentLocationTextField.delegate = self
         studentLocationTextField.text = studentInformation?.mapString ?? ""
         studentLinkTextField.text = studentInformation?.mediaURL ?? ""
+        studentLinkTextField.delegate = self
         findBtn.setTitle("FIND LOCATION", for: .normal)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     private func addStyleToElements() {
@@ -86,4 +95,12 @@ class PostLocationController: UIViewController {
         }
     }
 
+}
+
+// MARK: - UITextFieldDelegate
+extension PostLocationController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }

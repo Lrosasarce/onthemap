@@ -75,7 +75,9 @@ class LocationListViewController: UIViewController {
     
     // MARK: - IBAction
     @IBAction func logoutBtnPressed(_ sender: UIBarButtonItem) {
-        dismiss(animated: true, completion: nil)
+        APIManager.shared.logout {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     @IBAction func addAnnotationBtnPressed(_ sender: UIBarButtonItem) {

@@ -85,6 +85,8 @@ class MapViewController: UIViewController {
             annotations.append(annotation)
             mapView.addAnnotation(annotation)
             
+            
+            // If location student was storaged, the map show the student location
             if location.objectId == APIManager.Auth.objectId {
                 mapView.setCenter(annotation.coordinate, animated: false)
             }

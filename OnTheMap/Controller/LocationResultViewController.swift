@@ -46,6 +46,7 @@ class LocationResultViewController: UIViewController {
     }
     
     private func searchLocation() {
+        configureActivityIndicator(enabled: true)
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = searchText
         
@@ -70,9 +71,14 @@ class LocationResultViewController: UIViewController {
     func searchLocation(location: CLLocationCoordinate2D) {
         let annotation = MKPointAnnotation()
         annotation.title = searchText
-        annotation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        annotation.coordinate = location
+        let region = MKCoordinateRegion(center: location
+                                        , latitudinalMeters: 500, longitudinalMeters: 500)
+        let adjustRegion = mapView.regionThatFits(region)
         mapView.addAnnotation(annotation)
-        mapView.setCenter(location, animated: false)
+        mapView.setCenter(location, animated: true)
+        mapView.setRegion(adjustRegion, animated: true)
+        configureActivityIndicator(enabled: false)
     }
     
     private func configureActivityIndicator(enabled: Bool) {
